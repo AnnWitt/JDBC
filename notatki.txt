@@ -1,0 +1,12 @@
+dependencies
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+
+      //doczytac jak wskazac poprawny connection przy wiecej niz jednej bazie
+
+      statemnt -klasa ktorej uzywamy do wykonania zapytania
+
+      prepared/callable statement - lepsze, szybsze
