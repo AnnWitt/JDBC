@@ -10,3 +10,77 @@ dependencies
       statemnt -klasa ktorej uzywamy do wykonania zapytania
 
       prepared/callable statement - lepsze, szybsze
+
+      DAO - wszystkie operacje na tabely
+      CRUD - create read update delete
+
+      --------------------------z DAO App 13:59
+      package org.example.sql;
+
+
+      import dao.CountryDao;
+      import dao.RegionDao;
+      import org.example.ConnectionManager;
+      import org.example.models.Country;
+      import org.example.models.Region;
+
+      import java.sql.*;
+      import java.util.ArrayList;
+      import java.util.List;
+
+      public class App {
+          public static void main(String[] args) throws Exception {
+              ConnectionManager connectionManager = new ConnectionManager();
+              Connection connection = connectionManager.getConnection();
+
+              System.out.println("getAllRegions");
+              System.out.println(getAllRegions(connection));
+              System.out.println("getAllCountries");
+
+              System.out.println("---------");
+              RegionDao regionDao=new RegionDao(connection); //wzorzec projektowy fasada (kryjemy wszystko zw z tematem w jednym interfejsie
+              Region regionByID = regionDao.getRegionByID(2);
+              System.out.println(regionByID);
+
+              System.out.println("------");
+              System.out.println(getAllCountries(connection));
+              System.out.println("po id");
+              System.out.println("Country ID po NL");
+              System.out.println("====");
+              CountryDao countryDao=new CountryDao(connection);
+              Country countryByID=countryDao.getCoutryByID("NL");
+              System.out.println(countryByID);
+              System.out.println("====");
+              //TBD
+              connection.close();
+          }
+
+          public static List<Region> getAllRegions(Connection connection) throws SQLException {
+              List<Region> regions = new ArrayList<>();
+              PreparedStatement preparedStatement = connection.prepareStatement("SELECT REGION_ID, REGION_NAME FROM REGIONS");
+              ResultSet resultSet = preparedStatement.executeQuery();
+              while (resultSet.next()) {
+                  int region_id = resultSet.getInt("REGION_ID");
+                  String region_name = resultSet.getString("REGION_NAME");
+                  Region region = new Region(region_name, region_id);
+                  regions.add(region);
+              }
+              preparedStatement.close();
+              return regions;
+          }
+          public static List<Country> getAllCountries(Connection connection) throws SQLException {
+              List<Country> countryList = new ArrayList<>();
+              PreparedStatement countriesPrepareStatement = connection.prepareStatement("SELECT * FROM COUNTRIES");
+              ResultSet countiesResultSet = countriesPrepareStatement.executeQuery();
+              while (countiesResultSet.next()) {
+                  String country_id = countiesResultSet.getString("COUNTRY_ID");
+                  String country_name = countiesResultSet.getString("COUNTRY_NAME");
+                  int region_id = countiesResultSet.getInt("REGION_ID");
+                  Country country = new Country(country_id, country_name, region_id);
+                  countryList.add(country);
+              }
+              return countryList;
+          }
+      }
+
+--------------------------------------------------
